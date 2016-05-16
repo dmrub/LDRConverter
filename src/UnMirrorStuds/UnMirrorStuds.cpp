@@ -4,6 +4,7 @@
 #include <LDLoader/LDLMainModel.h>
 #include <LDLoader/LDLModelLine.h>
 #include <TCFoundation/TCAlertManager.h>
+#include <TCFoundation/TCStlIncludes.h>
 
 #ifdef WIN32
 #include <direct.h>
@@ -38,7 +39,7 @@ bool UnMirrorStuds::checkOption(const char *option)
 	{
 		return false;
 	}
-	else if (stricmp(option, "-s") == 0)
+	else if (strcasecmp(option, "-s") == 0)
 	{
 		if (m_fileProcessed)
 		{
@@ -54,7 +55,7 @@ bool UnMirrorStuds::checkOption(const char *option)
 			m_overwrite = false;
 		}
 	}
-	else if (stricmp(option, "-d") == 0)
+	else if (strcasecmp(option, "-d") == 0)
 	{
 		if (m_fileProcessed)
 		{
@@ -72,7 +73,7 @@ bool UnMirrorStuds::checkOption(const char *option)
 			}
 		}
 	}
-	else if (stricmp(option, "-v") == 0)
+	else if (strcasecmp(option, "-v") == 0)
 	{
 		if (m_fileProcessed)
 		{
@@ -83,7 +84,7 @@ bool UnMirrorStuds::checkOption(const char *option)
 			m_verbose = true;
 		}
 	}
-	else if (stricmp(option, "--") == 0)
+	else if (strcasecmp(option, "--") == 0)
 	{
 		m_optionsDone = true;
 	}
