@@ -1,5 +1,5 @@
 #include "LDExporter.h"
-#include "LDPovExporter.h"
+//#include "LDPovExporter.h"
 #include <TCFoundation/TCUserDefaults.h>
 #include <TCFoundation/mystring.h>
 #include <TCFoundation/TCLocalStrings.h>
@@ -323,7 +323,7 @@ int LDExporter::runInternal(void)
 	}
 	if (strcasecmp(outputType, "POV") == 0)
 	{
-		pExporter = new LDPovExporter;
+		// pExporter = new LDPovExporter;
 	}
 	retValue = runInternal(pExporter);
 	delete outputType;
