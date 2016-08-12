@@ -108,6 +108,8 @@ TCExport void combinePath(const std::string &left, const std::string &right,
 TCExport void combinePath(const char *left, const char *right,
 	std::string &combinedPath);
 
+TCExport bool fixPathCase(char *path);
+
 TCExport char* findExecutable(const char* executable);
 
 TCExport void stripCRLF(char*);

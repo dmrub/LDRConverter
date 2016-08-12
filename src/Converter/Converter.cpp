@@ -74,9 +74,12 @@ static bool fileCaseCallback(char *filename)
 {
     FILE *file;
 
-    fprintf(stderr, "file case callback : %s\n", filename); // ???DEBUG
+    if (!fixPathCase(filename))
+    {
+        fprintf(stderr, "file case callback : %s\n", filename); // ???DEBUG
+        convertStringToLower(filename);
+    }
 
-    convertStringToLower(filename);
     file = fopen(filename, "r");
     if (file)
     {

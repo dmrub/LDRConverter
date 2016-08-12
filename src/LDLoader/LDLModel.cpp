@@ -320,7 +320,7 @@ FILE *LDLModel::openFile(const char *filename)
 	FILE *modelFile = NULL;
 	char *newFilename = copyString(filename);
 
-	convertStringToLower(newFilename);
+	fixPathCase(newFilename);
 	if (fileCaseCallback)
 	{
 		// Use binary mode to work around problem with fseek on a non-binary

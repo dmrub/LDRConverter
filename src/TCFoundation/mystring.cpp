@@ -9,6 +9,8 @@
 
 #ifndef WIN32
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
 #endif // !WIN32
 
 #ifdef WIN32
@@ -903,6 +905,96 @@ char* cleanedUpPath(const char* path)
 #endif // WIN32
 	return newPath;
 }
+
+bool fixPathCase(char *path)
+{
+#ifndef WIN32
+    int pathCount;
+    char **pathComponents = componentsSeparatedByString(path, "/", pathCount);
+
+    // fprintf(stderr, "PATH: %s\n", path); //???DEBUG
+    std::string newPath;
+    bool fixed = true;
+    const char *resultPath = 0;
+    std::string checkPath;
+
+    struct stat statData;
+
+    for (int i = 0; i < pathCount; i++)
+    {
+        if (newPath.empty() || *newPath.rbegin() != '/')
+        {
+            newPath += '/';
+        }
+
+        //fprintf(stderr, "C[%d]: %s\n", i, pathComponents[i]); //???DEBUG
+
+        checkPath = newPath + pathComponents[i];
+        if (stat(checkPath.c_str(), &statData) != 0)
+        {
+            //fprintf(stderr, "NO FILE/DIRECTORY: %s\n", checkPath.c_str()); //???DEBUG
+            checkPath = newPath;
+
+            DIR *dp = opendir(newPath.c_str());
+            if (dp)
+            {
+                bool found = false;
+                while (struct dirent *ep = readdir(dp))
+                {
+                    // fprintf(stderr, "DIRENT %s\n", ep->d_name); //???DEBUG
+                    if (strcasecmp(pathComponents[i], ep->d_name) == 0)
+                    {
+                        //fprintf(stderr, "FOUND %s\n", ep->d_name); //???DEBUG
+                        checkPath += ep->d_name;
+                        found = true;
+                        break;
+                    }
+                }
+                closedir (dp);
+                if (!found)
+                {
+                    //fprintf(stderr, "NOT FOUND %s in %s\n", pathComponents[i], checkPath.c_str()); //???DEBUG
+                    resultPath = path;
+                    fixed = false;
+                    break;
+                }
+            }
+            else
+            {
+                resultPath = path;
+                fixed = false;
+                break;
+            }
+        }
+        else
+        {
+            //fprintf(stderr, "PATH OK: %s\n", checkPath.c_str()); //???DEBUG
+        }
+        std::swap(newPath, checkPath);
+        resultPath = newPath.c_str();
+    }
+
+    deleteStringArray(pathComponents, pathCount);
+
+    if (fixed)
+    {
+        if (newPath.length() <= strlen(path))
+        {
+            //fprintf(stderr, "fixUnixPathCase -> %s\n", newPath.c_str()); //???DEBUG
+            strcpy(path, newPath.c_str());
+        }
+        else
+        {
+            fprintf(stderr, "ERROR: New path %s is longer than original %s\n", newPath.c_str(), path);
+        }
+    }
+    return fixed;
+#else
+    struct stat statData;
+    return stat(path, &statData) == 0;
+#endif
+}
+
 
 static size_t lastSlashIndex(const ucstring &path)
 {
