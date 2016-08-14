@@ -172,7 +172,11 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/src/LDViewMessages.ini LDViewMessages.ini
   COMMAND Headerize LDViewMessages.ini
   DEPENDS src/LDViewMessages.ini
-)
+  )
+
+add_custom_target(
+  LDViewMessages
+  DEPENDS LDViewMessages.h)
 
 add_executable(UnMirrorStuds
   src/UnMirrorStuds/UnMirrorStuds.cpp
@@ -182,4 +186,13 @@ target_link_libraries(UnMirrorStuds LDLoader TCFoundation ${PNG_LIBRARY} ${JPEG_
 add_executable(ldrconvert
   src/Converter/Converter.cpp
   src/Converter/ConverterMain.cpp)
+
+add_dependencies(ldrconvert
+  LDViewMessages)
+
 target_link_libraries(ldrconvert LDExporter LDLoader TCFoundation 3ds ${PNG_LIBRARY} ${JPEG_LIBRARY})
+
+install(TARGETS ldrconvert
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib/static)
